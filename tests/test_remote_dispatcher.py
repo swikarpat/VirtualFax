@@ -121,7 +121,7 @@ def test_sync_document(dispatcher, dummy_pdf):
         mock_run.assert_called_once()
         cmd = mock_run.call_args[0][0]
         assert "scp" in cmd
-        assert f"ec2-user@3.14.15.92:~/FaxMachine/{dummy_pdf.name}" in cmd
+        assert f"ec2-user@3.14.15.92:~/VirtualFax/{dummy_pdf.name}" in cmd
 
 
 def test_execute_remote_send(dispatcher):

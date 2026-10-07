@@ -176,9 +176,11 @@ class EphemeralEC2Dispatcher:
         logger.info("Verifying Asterisk Docker container on EC2...")
         console.print("[bold cyan]🐳 Docker Check:[/bold cyan] Verifying Asterisk PBX container...")
         check_cmd = (
+            "if [ -d ~/FaxMachine ] && [ ! -d ~/VirtualFax ]; then ln -s ~/FaxMachine ~/VirtualFax; "
+            "elif [ -d ~/VirtualFax ] && [ ! -d ~/FaxMachine ]; then ln -s ~/VirtualFax ~/FaxMachine; fi; "
             "docker ps -q -f name=fax_asterisk_gateway | grep . >/dev/null 2>&1 || "
-            "(cd ~/FaxMachine && docker compose up -d); "
-            "mkdir -p ~/FaxMachine/scratch/fax_spool && chmod -R 777 ~/FaxMachine/scratch >/dev/null 2>&1 || true"
+            "(cd ~/VirtualFax 2>/dev/null || cd ~/FaxMachine; docker compose up -d); "
+            "mkdir -p ~/VirtualFax/scratch/fax_spool ~/VirtualFax/receipts && chmod -R 777 ~/VirtualFax/scratch >/dev/null 2>&1 || true"
         )
         ssh_cmd = self._build_ssh_cmd(public_ip, check_cmd)
         res = subprocess.run(ssh_cmd, capture_output=True, text=True)
@@ -188,11 +190,11 @@ class EphemeralEC2Dispatcher:
             console.print("[bold green]✔ Asterisk Service:[/bold green] Container running and ready.")
 
     def sync_document(self, public_ip: str, local_pdf: Path) -> str:
-        """Pushes the local document to ~/FaxMachine/ on EC2."""
+        """Pushes the local document to ~/VirtualFax/ on EC2."""
         if not local_pdf.exists():
             raise FileNotFoundError(f"Local document not found: {local_pdf}")
 
-        remote_dest = f"{self.ssh_user}@{public_ip}:~/FaxMachine/{local_pdf.name}"
+        remote_dest = f"{self.ssh_user}@{public_ip}:~/VirtualFax/{local_pdf.name}"
         logger.info(f"Uploading {local_pdf.name} to EC2...")
         console.print(f"[bold cyan]📤 Uploading Document:[/bold cyan] Transferring {local_pdf.name} to EC2...")
         scp_cmd = self._build_scp_cmd(str(local_pdf.resolve()), remote_dest)
@@ -218,7 +220,7 @@ class EphemeralEC2Dispatcher:
         console.print(f"[bold cyan]📠 Executing Remote Dispatch:[/bold cyan] Streaming execution from EC2...\n")
 
         cmd_parts = [
-            "cd ~/FaxMachine",
+            "cd ~/VirtualFax",
             "source .venv/bin/activate",
             f"./faxctl send {number} {remote_filename} --recipient-name '{recipient_name}'",
         ]
@@ -250,7 +252,7 @@ class EphemeralEC2Dispatcher:
     def pull_receipts(self, public_ip: str, local_receipts_dir: Path) -> None:
         """Pulls delivery receipt files from EC2 to local receipts/ directory."""
         local_receipts_dir.mkdir(parents=True, exist_ok=True)
-        remote_src = f"{self.ssh_user}@{public_ip}:~/FaxMachine/receipts/*"
+        remote_src = f"{self.ssh_user}@{public_ip}:~/VirtualFax/receipts/*"
         logger.info(f"Pulling receipts from {remote_src} to {local_receipts_dir}...")
         scp_cmd = self._build_scp_cmd(remote_src, str(local_receipts_dir.resolve()))
         res = subprocess.run(scp_cmd, capture_output=True, text=True)

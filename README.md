@@ -135,8 +135,8 @@ For local geographic numbers (e.g., county registrars in `510` Oakland or state 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/FaxMachine.git
-cd FaxMachine
+git clone https://github.com/swikarpat/VirtualFax.git
+cd VirtualFax
 
 # Create and activate Python virtual environment
 python3 -m venv .venv
