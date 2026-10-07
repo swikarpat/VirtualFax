@@ -11,14 +11,14 @@ If you haven't sent a fax in months and just need the quick steps, follow this 3
 ### 1. Drop your PDF(s) into `outbox/`
 Put the PDF file(s) you want to transmit into your project's `outbox/` folder:
 ```bash
-~/TechProject/VirtualFax/outbox/    # or ~/TechProject/FaxMachine/outbox/
+~/TechProject/VirtualFax/outbox/
 ```
 *(You can drag-and-drop files directly in macOS Finder).*
 
 ### 2. Run `./send.sh` from Terminal
 Open Terminal and navigate to the project directory:
 ```bash
-cd ~/TechProject/VirtualFax    # or cd ~/TechProject/FaxMachine
+cd ~/TechProject/VirtualFax
 ```
 
 Choose one of these commands:
