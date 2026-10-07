@@ -4,6 +4,58 @@ A production-grade, 100% free virtual fax transmission engine designed for sendi
 
 ---
 
+## 🚀 Quick Start: How to Send a Fax (Cheat Sheet)
+
+If you haven't sent a fax in months and just need the quick steps, follow this 3-step workflow:
+
+### 1. Drop your PDF(s) into `outbox/`
+Put the PDF file(s) you want to transmit into your project's `outbox/` folder:
+```bash
+~/TechProject/VirtualFax/outbox/    # or ~/TechProject/FaxMachine/outbox/
+```
+*(You can drag-and-drop files directly in macOS Finder).*
+
+### 2. Run `./send.sh` from Terminal
+Open Terminal and navigate to the project directory:
+```bash
+cd ~/TechProject/VirtualFax    # or cd ~/TechProject/FaxMachine
+```
+
+Choose one of these commands:
+
+- **Auto-Detect Newest File (Fastest):**  
+  If you dropped your document into `outbox/`, you don't even need to type the filename:
+  ```bash
+  ./send.sh 510-272-6982 "Alameda County Registrar"
+  ```
+
+- **Specify a Specific File:**
+  ```bash
+  ./send.sh 510-272-6982 "Alameda County Registrar" ApplicationForm.pdf
+  ```
+
+- **Send Multiple Files (Auto-Merged):**  
+  List multiple files—they will be merged into a single consolidated fax:
+  ```bash
+  ./send.sh 510-272-6982 "County Clerk" Form.pdf ID.pdf SupportingDoc.pdf
+  ```
+
+- **Send to US Toll-Free Government Line (IRS, USCIS, Social Security):**
+  ```bash
+  ./send.sh 800-829-1040 "IRS ITIN Operations" FormW7.pdf
+  ```
+
+### 3. Check Delivery Proof in `receipts/`
+When the transmission completes, delivery receipts with confirmation codes and tracking URLs are saved automatically:
+```bash
+ls -l receipts/
+```
+
+> **Automated Zero-Cost Protection:**  
+> The script boots your US EC2 micro-gateway, transmits through a native US IP to prevent geoblocks, and automatically powers down the EC2 server immediately upon completion—guaranteeing 0 wasted Free-Tier hours ($0.00 cost).
+
+---
+
 ## 🏛️ Architecture Overview
 
 The gateway operates an **intelligent Dual-Route Engine** that classifies destination numbers using the North American Numbering Plan (NANP) and automatically selects the optimal zero-cost path:
