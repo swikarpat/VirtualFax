@@ -1,0 +1,73 @@
+# Gateway YAML configuration overrides & defaults
+gateway:
+  name: "ZeroCost-DualRoute-FaxGateway"
+  version: "1.0.0"
+
+routing:
+  nanp_country_code: "1"
+  toll_free_prefixes:
+    - "800"
+    - "888"
+    - "877"
+    - "866"
+    - "855"
+    - "844"
+    - "833"
+  reserved_toll_free_prefixes:
+    - "822"
+    - "880"
+    - "881"
+    - "882"
+    - "883"
+    - "884"
+    - "885"
+    - "886"
+    - "887"
+    - "889"
+
+voip_route:
+  t38_enabled: true
+  resolution: "fine" # fine (204x196) or normal (204x98)
+  page_size: "letter"
+  max_bitrate: 14400
+  min_bitrate: 2400
+  sip_trunks:
+    primary: "tf.alcazarnetworks.com"
+    fallback: "tollfree.sip-trunk.info"
+  retry_count: 3
+  retry_backoff_sec: 10
+
+web_route:
+  provider: "faxzero"
+  max_pages_per_fax: 3
+  max_file_size_mb: 20
+  allowed_formats:
+    - ".pdf"
+    - ".doc"
+    - ".docx"
+  retry_count: 2
+  retry_backoff_sec: 5
+
+# Built-in directory of frequent US Government agencies for reference & friendly display
+agencies:
+  "8552151627":
+    agency: "Internal Revenue Service (IRS)"
+    department: "Adoption Tax Credit / Form 8839"
+  "8552151628":
+    agency: "Internal Revenue Service (IRS)"
+    department: "Earned Income Credit / Examination"
+  "8558222694":
+    agency: "Internal Revenue Service (IRS)"
+    department: "ITIN Operations / W-7"
+  "8774770572":
+    agency: "Internal Revenue Service (IRS)"
+    department: "Office of Appeals"
+  "8008291040":
+    agency: "Internal Revenue Service (IRS)"
+    department: "Main Inquiries"
+  "8772474769":
+    agency: "US Citizenship & Immigration Services (USCIS)"
+    department: "National Benefits Center"
+  "2026190000":
+    agency: "Department of State"
+    department: "Executive Secretariat"

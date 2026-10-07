@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  asterisk:
+    build:
+      context: .
+      dockerfile: Dockerfile.asterisk
+    container_name: fax_asterisk_gateway
+    restart: unless-stopped
+    ports:
+      # SIP Signaling
+      - "5060:5060/udp"
+      - "5060:5060/tcp"
+      # Asterisk Manager Interface (AMI)
+      - "5038:5038"
+      # RTP Audio & T.38 UDPTL Ports
+      - "10000-10100:10000-10100/udp"
+    volumes:
+      # Mount configuration files for live adjustments
+      - ./config/asterisk:/etc/asterisk
+      # Shared spool folder for outbound TIFF files & call files
+      - ./scratch/fax_spool:/fax_spool
+      - ./scratch/asterisk_spool:/var/spool/asterisk
+    environment:
+      - ASTERISK_USER=asterisk
+    network_mode: "host" # Host networking recommended on Linux/EC2 for RTP NAT traversal; on macOS Docker Desktop ports are mapped
+
+volumes:
+  fax_spool:
+  asterisk_spool:

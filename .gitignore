@@ -1,0 +1,50 @@
+# ==============================================================================
+# Git Ignore - Secrets, Personal Data & Runtime Artifacts
+# ==============================================================================
+
+# Environment & Secret Configurations (NEVER COMMIT)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials/
+secrets/
+
+# Personal Documents & Outbox
+outbox/
+*.pdf
+!tests/**/*.pdf
+
+# Receipts & Delivery Confirmations
+receipts/*
+!receipts/.gitkeep
+
+# Temporary Conversion Artifacts & Spool
+scratch/
+*.tif
+*.tiff
+*.png
+*.jpg
+*.jpeg
+
+# Runtime Logs
+*.log
+gateway.log
+
+# Temporary Scripts
+fix_voip.py
+test_doc.*
+
+# Python & Virtual Environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+.pytest_cache/
+
+# Operating System Specific
+.DS_Store
+Thumbs.db

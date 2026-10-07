@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# faxctl - Zero-Cost Dual-Route Virtual Fax Gateway CLI Wrapper
+# ==============================================================================
+
+set -e
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+
+# Activate virtualenv if present
+if [ -d "$DIR/.venv" ]; then
+    PYTHON="$DIR/.venv/bin/python3"
+else
+    PYTHON="python3"
+fi
+
+export PYTHONPATH="$DIR:$PYTHONPATH"
+
+exec "$PYTHON" "$DIR/gateway/cli.py" "$@"

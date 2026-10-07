@@ -1,0 +1,52 @@
+# ==============================================================================
+# Dockerfile: Asterisk 20+ with SpanDSP (T.30 / T.38) Outbound Fax Engine
+# Compatible with Linux x86_64 and macOS Apple Silicon (arm64)
+# ==============================================================================
+
+FROM debian:12-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Install Asterisk, SpanDSP fax libraries, Ghostscript, and network diagnostics
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    asterisk \
+    asterisk-modules \
+    asterisk-core-sounds-en \
+    ghostscript \
+    libspandsp2 \
+    curl \
+    iproute2 \
+    net-tools \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create spool directories with proper permissions
+RUN mkdir -p /var/spool/asterisk/outgoing \
+             /var/spool/asterisk/fax \
+             /var/spool/asterisk/tmp \
+             /var/run/asterisk \
+             /var/log/asterisk \
+             /fax_spool && \
+    chown -R asterisk:asterisk /var/spool/asterisk /var/run/asterisk /var/log/asterisk /fax_spool
+
+# Copy configuration files into Asterisk config directory
+COPY config/asterisk/asterisk.conf /etc/asterisk/asterisk.conf
+COPY config/asterisk/modules.conf  /etc/asterisk/modules.conf
+COPY config/asterisk/pjsip.conf    /etc/asterisk/pjsip.conf
+COPY config/asterisk/extensions.conf /etc/asterisk/extensions.conf
+COPY config/asterisk/rtp.conf      /etc/asterisk/rtp.conf
+COPY config/asterisk/manager.conf  /etc/asterisk/manager.conf
+
+RUN chown -R asterisk:asterisk /etc/asterisk && \
+    chmod 640 /etc/asterisk/*.conf
+
+# SIP (5060), AMI (5038), RTP Media (10000-10100)
+EXPOSE 5060/udp 5060/tcp 5038/tcp 10000-10100/udp
+
+# Healthcheck testing Asterisk responsiveness
+HEALTHCHECK --interval=15s --timeout=5s --start-period=5s --retries=3 \
+  CMD asterisk -rx "core show version" || exit 1
+
+# Run Asterisk in foreground
+USER asterisk
+ENTRYPOINT ["asterisk", "-f", "-vvvg"]
