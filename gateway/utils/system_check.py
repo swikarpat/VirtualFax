@@ -108,7 +108,7 @@ class SystemDoctor:
     def check_egress_ip() -> Dict[str, Any]:
         """
         Queries IP geolocation to verify US VPN / Proxy connectivity.
-        Important when sending from India to prevent US gateway geoblocks.
+        Important when sending from outside the US to prevent gateway geoblocks.
         """
         try:
             with httpx.Client(timeout=6.0) as client:

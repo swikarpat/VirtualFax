@@ -1,6 +1,6 @@
-# ⚡ Zero-Cost ($0.00) Dual-Route Virtual Fax Gateway (India ➔ USA)
+# ⚡ Zero-Cost ($0.00) Dual-Route Virtual Fax Gateway (Anywhere ➔ USA)
 
-A production-grade, 100% free virtual fax transmission engine designed for sending PDF documents from India to United States government agencies (IRS, USCIS, County Election Boards, State Departments) with **$0.00 out-of-pocket cost**, no Twilio subscriptions, and zero per-page fees.
+A production-grade, 100% free virtual fax transmission engine designed for sending PDF documents from anywhere in the world to United States government agencies (IRS, USCIS, County Election Boards, State Departments) with **$0.00 out-of-pocket cost**, no Twilio subscriptions, and zero per-page fees.
 
 ---
 
@@ -240,7 +240,7 @@ Output:
 
 ### 3. Check Egress IP & US VPN Status
 
-When sending faxes from India, US web portals and certain VoIP trunks require a US egress IP to prevent geolocation rate limits:
+When sending faxes from outside the US, US web portals and certain VoIP trunks require a US egress IP to prevent geolocation rate limits:
 
 ```bash
 ./faxctl check-ip
@@ -297,9 +297,9 @@ same => n,Hangup()
 
 ---
 
-## 🌐 Running Behind a US VPN from India
+## 🌐 Running from Outside the US (VPN / EC2 Egress)
 
-When transmitting from India, you can run the gateway in two production configurations:
+When transmitting from outside the United States, you can run the gateway in two production configurations:
 
 ### Option A: AWS EC2 Free Tier (`t4g.micro` or `t3.micro` in `us-east-1` / `us-west-2`)
 Deploy the repository directly on an AWS EC2 instance in a US region:

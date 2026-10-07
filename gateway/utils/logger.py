@@ -68,7 +68,7 @@ def print_banner():
     """Prints a styled CLI banner."""
     banner_text = (
         "[bold cyan]⚡ ZERO-COST ($0) DUAL-ROUTE VIRTUAL FAX GATEWAY[/bold cyan]\n"
-        "[dim]India -> USA Free Transmission Engine | Government & Agency Gateway[/dim]\n"
+        "[dim]Anywhere -> USA Free Transmission Engine | Government & Agency Gateway[/dim]\n"
         "[green]Route A:[/green] Toll-Free (8YY) -> Asterisk/SpanDSP -> Open 8YY SIP Trunk ($0.00)\n"
         "[yellow]Route B:[/yellow] Geographic (NANP) -> Playwright Web Relay -> Gmail IMAP Auto-Activation ($0.00)"
     )
