@@ -4,7 +4,7 @@ A production-grade, 100% free virtual fax transmission engine designed for sendi
 
 ---
 
-## 🚀 Quick Start: How to Send a Fax (Cheat Sheet)
+## 🚀 Quick Start: How to Send a Fax 
 
 If you haven't sent a fax in months and just need the quick steps, follow this 3-step workflow:
 
