@@ -159,17 +159,19 @@ class EphemeralEC2Dispatcher:
             remote_cmd,
         ]
 
-    def _build_scp_cmd(self, src: str, dest: str) -> list:
+    def _build_scp_cmd(self, src: str, dest: str, recursive: bool = False) -> list:
         """Constructs an SCP command array."""
-        return [
+        cmd = [
             "scp",
             "-i", str(self.ssh_key_path),
             "-o", "StrictHostKeyChecking=no",
             "-o", "UserKnownHostsFile=/dev/null",
             "-o", "LogLevel=ERROR",
-            src,
-            dest,
         ]
+        if recursive:
+            cmd.append("-r")
+        cmd.extend([src, dest])
+        return cmd
 
     def ensure_docker_services(self, public_ip: str) -> None:
         """Checks if fax_asterisk_gateway is running; launches docker compose up -d if stopped."""
@@ -188,6 +190,17 @@ class EphemeralEC2Dispatcher:
             logger.warning(f"Docker verification returned code {res.returncode}: {res.stderr}")
         else:
             console.print("[bold green]✔ Asterisk Service:[/bold green] Container running and ready.")
+
+        # Sync local environment configuration (.env) and gateway codebase to EC2
+        local_env = Path(".env")
+        if local_env.exists():
+            scp_env = self._build_scp_cmd(str(local_env.resolve()), f"{self.ssh_user}@{public_ip}:~/VirtualFax/.env")
+            subprocess.run(scp_env, capture_output=True, text=True)
+
+        local_gateway = Path("gateway")
+        if local_gateway.exists():
+            scp_gw = self._build_scp_cmd(str(local_gateway.resolve()), f"{self.ssh_user}@{public_ip}:~/VirtualFax/", recursive=True)
+            subprocess.run(scp_gw, capture_output=True, text=True)
 
     def sync_document(self, public_ip: str, local_pdf: Path) -> str:
         """Pushes the local document to ~/VirtualFax/ on EC2."""

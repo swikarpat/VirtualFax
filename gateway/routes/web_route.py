@@ -90,11 +90,12 @@ class WebFaxRoute(BaseFaxRoute):
             )
 
         # 2. Prepare Form Metadata with dynamic sender alias rotation
-        resolved_email = (
-            sender_email
-            if sender_email
-            else self.gateway.generate_email_alias(settings.fax_sender_email)
-        )
+        if sender_email:
+            resolved_email = sender_email
+        elif hasattr(self.gateway, "generate_email_alias"):
+            resolved_email = self.gateway.generate_email_alias(settings.fax_sender_email)
+        else:
+            resolved_email = settings.fax_sender_email
         sender = SenderInfo(
             name=settings.fax_sender_name,
             company=settings.fax_sender_company,
@@ -135,6 +136,25 @@ class WebFaxRoute(BaseFaxRoute):
             )
 
         # 4. Asynchronous IMAP Auto-Activation
+        if not settings.gmail_app_password or "xxxx" in settings.gmail_app_password:
+            logger.info("GMAIL_APP_PASSWORD is not configured. Web submission succeeded! Activation email dispatched to sender.")
+            duration = round(time.time() - start_time, 2)
+            tx_id = f"WEB-{uuid.uuid4().hex[:8].upper()}"
+            return FaxResult(
+                success=True,
+                route_type=RouteType.WEB_GEOGRAPHIC,
+                destination_number=parsed_number.formatted_display,
+                recipient_name=recipient_name,
+                pages_sent=pdf_meta.page_count,
+                transaction_id=tx_id,
+                details=(
+                    f"Dispatched via FaxZero relay! Activation email sent to {resolved_email}. "
+                    "Please check your inbox and click the verification link to complete transmission."
+                ),
+                cost_usd=0.00,
+                duration_sec=duration,
+            )
+
         logger.info("Step 2/2: Awaiting activation email and auto-approving verification link...")
         activation_res = self.imap_listener.poll_for_confirmation(
             since_time=datetime.now(),
